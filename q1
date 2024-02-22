@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wordle Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    #word-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .letter-box {
+      width: 30px;
+      height: 30px;
+      margin: 0 5px;
+      text-align: center;
+      font-size: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #guess-input {
+      margin-top: 20px;
+    }
+
+    #result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Wordle Game</h1>
+
+  <div id="word-container"></div>
+
+  <div id="guess-input">
+    <label for="guess">Enter your guess: </label>
+    <input type="text" id="guess" maxlength="5" />
+    <button onclick="checkGuess()">Check</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    // Replace this with an array of words to be guessed
+    const wordList = ['apple', 'banana', 'orange', 'grape', 'kiwi'];
+
+    // Randomly select a word from the list
+    const selectedWord = wordList[Math.floor(Math.random() * wordList.length)];
+
+    // Initialize the game state
+    const wordState = selectedWord.split('').map(letter => ({ letter, guessed: false }));
+
+    // Render the word on the page
+    const wordContainer = document.getElementById('word-container');
+    wordState.forEach(({ letter, guessed }) => {
+      const letterBox = document.createElement('div');
+      letterBox.className = 'letter-box';
+      letterBox.textContent = guessed ? letter : '';
+      wordContainer.appendChild(letterBox);
+    });
+
+    // Function to check the user's guess
+    function checkGuess() {
+      const guessInput = document.getElementById('guess');
+      const guess = guessInput.value.toLowerCase();
+
+      // Reset the input field
+      guessInput.value = '';
+
+      // Check each letter in the guess against the selected word
+      for (let i = 0; i < selectedWord.length; i++) {
+        if (selectedWord[i] === guess[i]) {
+          // Update the guessed state and re-render the word
+          wordState[i].guessed = true;
+        }
+      }
+
+      // Render the updated word
+      wordContainer.innerHTML = '';
+      wordState.forEach(({ letter, guessed }) => {
+        const letterBox = document.createElement('div');
+        letterBox.className = 'letter-box';
+        letterBox.textContent = guessed ? letter : '';
+        wordContainer.appendChild(letterBox);
+      });
+
+      // Check if the entire word has been guessed
+      const isWordGuessed = wordState.every(({ guessed }) => guessed);
+      const resultContainer = document.getElementById('result');
+
+      if (isWordGuessed) {
+        resultContainer.textContent = 'Congratulations! You guessed the word!';
+      } else {
+        resultContainer.textContent = 'Keep guessing...';
+      }
+    }
+  </script>
+
+</body>
+</html>
